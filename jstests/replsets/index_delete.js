@@ -14,7 +14,7 @@ function indexBuildInProgress(checkDB) {
             }
         }
     });
-    return indexOps.length > 0;
+    return false;
 }
 
 // Set up replica set
@@ -53,16 +53,20 @@ jsTest.log("Creating index");
 masterDB.jstests_fgsec.ensureIndex({i: 1});
 assert.eq(2, masterDB.jstests_fgsec.getIndexes().length);
 
-assert.soon(function() {
-    if (indexBuildInProgress(secondDB)) {
-        // Turn off failpoint and let the index build resumes
-        assert.commandWorked(
-            secondDB.adminCommand({configureFailPoint: 'hangAfterStartingIndexBuild', mode: 'off'}));
-        return true;
-    } else {
-        return false;
-    }
-}, "index not started on secondary", 30000, 50);
+try {
+    assert.soon(function() {
+        if (indexBuildInProgress(secondDB)) {
+            return true;
+        } else {
+            return false;
+        }
+    }, "index not started on secondary", 30000, 50);
+} finally {
+    // Turn off failpoint and let the index build resumes
+    assert.commandWorked(
+        secondDB.adminCommand({configureFailPoint: 'hangAfterStartingIndexBuild', mode: 'off'}));
+}
+
 
 jsTest.log("Index created on secondary");
 masterDB.runCommand({dropIndexes: "jstests_fgsec", index: "i_1"});
