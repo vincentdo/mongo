@@ -212,8 +212,11 @@ Decimal128 ValueWriter::toDecimal128() {
     if (_value.isString()) {
         std::string input = toString();
         // Only NaNs inputs should actually be converted to decimal NaN
-        if (input == "NaN" || input == "-sNaN" || input == "+sNaN") {
-            return Decimal128(input);
+        if (input == "NaN" || input == "+sNaN") {
+            return Decimal128::kPositiveNaN;
+        }
+        if (input == "-sNaN") {
+            return Decimal128::kNegativeNaN;
         }
         else {
             Decimal128 decimal = Decimal128(toString(), &signalingFlag);
