@@ -177,6 +177,8 @@ public:
      */
     explicit Decimal128(std::string stringValue, RoundingMode roundMode = kRoundTiesToEven);
 
+    explicit Decimal128(std::string stringValue, std::uint32_t* signalingFlag, RoundingMode roundMode = kRoundTiesToEven);
+
     /**
      * This function gets the inner Value struct storing a Decimal128 value.
      */

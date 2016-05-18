@@ -195,6 +195,7 @@ int64_t ValueWriter::toInt64() {
 }
 
 Decimal128 ValueWriter::toDecimal128() {
+    std::uint32_t signalingFlag;
     if (_value.isNumber()) {
         return Decimal128(toNumber(), Decimal128::kRoundTo15Digits);
     }
@@ -209,7 +210,32 @@ Decimal128 ValueWriter::toDecimal128() {
         return NumberDecimalInfo::ToNumberDecimal(_context, _value);
 
     if (_value.isString()) {
-        return Decimal128(toString());
+        std::string input = toString();
+        // Only NaNs inputs should actually be converted to decimal NaN
+        if (input == "NaN" || input == "-sNaN" || input == "+sNaN") {
+            return Decimal128(input);
+        }
+        else {
+            Decimal128 decimal = Decimal128(toString(), &signalingFlag);
+            std::string errMsg;
+            // All other strings are invalid
+            if (decimal.isNaN()) {
+                errMsg = "Failure to convert invalid input to Decimal128 value.";
+            } 
+            if (signalingFlag == Decimal128::SignalingFlag::kInvalid) {
+                errMsg = "Failure to convert invalid input to Decimal128 value.";
+            }
+            if (signalingFlag == Decimal128::SignalingFlag::kOverflow) {
+                errMsg = "Overflow detected when converting input to Decimal128 value.";
+            }
+            if (signalingFlag == Decimal128::SignalingFlag::kUnderflow) {
+                errMsg = "Underflow detected when converting input to Decimal128 value.";
+            }
+            if (errMsg.size() != 0) {
+                uasserted(ErrorCodes::BadValue, str::stream() << errMsg);
+            }
+            return decimal;
+        }
     }
 
     uasserted(ErrorCodes::BadValue, str::stream() << "Unable to write Decimal128 value.");
