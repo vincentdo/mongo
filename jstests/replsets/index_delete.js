@@ -6,17 +6,15 @@
 
 function indexBuildInProgress(checkDB) {
     var inprog = checkDB.currentOp().inprog;
-    var indexBuildOpId = -1;
-    inprog.forEach(function(op) {
-        // printjson(op);
+    var indexOps = inprog.filter(function(op) {
         if (op.msg && op.msg.includes('Index Build')) {
-            // printjson(op);
+            printjson(op);
             if (op.progress && (op.progress.done / op.progress.total) > 0.20) {
-                indexBuildOpId = op.opid;
+                return true;
             }
         }
     });
-    return indexBuildOpId != -1;
+    return indexOps.length > 0;
 }
 
 // Set up replica set
@@ -57,12 +55,13 @@ assert.eq(2, masterDB.jstests_fgsec.getIndexes().length);
 
 assert.soon(function() {
     if (indexBuildInProgress(secondDB)) {
-        // Disable the failpoint and let the index build resume
+        // Turn off failpoint and let the index build resumes
         assert.commandWorked(
             secondDB.adminCommand({configureFailPoint: 'hangAfterStartingIndexBuild', mode: 'off'}));
         return true;
+    } else {
+        return false;
     }
-    else return false;
 }, "index not started on secondary", 30000, 50);
 
 jsTest.log("Index created on secondary");
