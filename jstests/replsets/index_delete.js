@@ -8,13 +8,13 @@ function indexBuildInProgress(checkDB) {
     var inprog = checkDB.currentOp().inprog;
     var indexOps = inprog.filter(function(op) {
         if (op.msg && op.msg.includes('Index Build')) {
-            printjson(op);
             if (op.progress && (op.progress.done / op.progress.total) > 0.20) {
+                printjson(op);
                 return true;
             }
         }
     });
-    return false;
+    return indexOps.length > 0;
 }
 
 // Set up replica set
