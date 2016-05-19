@@ -831,17 +831,21 @@ TEST(Decimal128Test, TestDecimal128ToStringNegNaN) {
 }
 
 TEST(Decimal128Test, TestDecimal128ToStringPosInf) {
-    std::string s = "+Infinity";
-    Decimal128 d(s);
-    std::string result = d.toString();
-    ASSERT_EQUALS(result, "Inf");
+    std::string s[3] = {"Inf", "Infinity", "+Inf"};
+    Decimal128 d[3];
+    for (int i = 0; i < 3; i++) {
+        d[i] = Decimal128::Decimal128(s[i]);
+        ASSERT_EQUALS(d[i].toString(), "Infinity");
+    }
 }
 
 TEST(Decimal128Test, TestDecimal128ToStringNegInf) {
-    std::string s = "-Infinity";
-    Decimal128 d(s);
-    std::string result = d.toString();
-    ASSERT_EQUALS(result, "-Inf");
+    std::string s[2] = {"-Infinity", "-Inf"}; 
+    Decimal128 d[2];
+    for (int i = 0; i < 2; i++) {
+        d[i] = Decimal128::Decimal128(s[i]);
+        ASSERT_EQUALS(d[i].toString(), "-Infinity");
+    }
 }
 
 // Tests for Decimal128 operations that use a signaling flag
