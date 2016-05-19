@@ -220,7 +220,6 @@ Decimal128 ValueWriter::toDecimal128() {
         if (Decimal128::hasFlag(signalingFlag, Decimal128::SignalingFlag::kInexact)) {
             uasserted(ErrorCodes::BadValue, 
                 str::stream() << "Inexact conversion detected when converting input to Decimal128 value.");
-            errMsg = ;
         }
         return decimal;
     }
