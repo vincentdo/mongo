@@ -372,7 +372,7 @@ double Decimal128::toDouble(std::uint32_t* signalingFlags, RoundingMode roundMod
 
 inline bool isValidNanOrInf(std::string dec128String) {
     return dec128String == "NaN" || dec128String == "Infinity" || dec128String == "-Infinity";
-} 
+}
 
 std::string Decimal128::toString() const {
     BID_UINT128 dec128 = decimal128ToLibraryType(_value);
