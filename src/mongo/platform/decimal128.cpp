@@ -370,6 +370,10 @@ double Decimal128::toDouble(std::uint32_t* signalingFlags, RoundingMode roundMod
     return bid128_to_binary64(dec128, roundMode, signalingFlags);
 }
 
+inline bool isValidNanOrInf(std::string dec128String) {
+    return dec128String == "NaN" || dec128String == "Infinity" || dec128String == "-Infinity";
+} 
+
 std::string Decimal128::toString() const {
     BID_UINT128 dec128 = decimal128ToLibraryType(_value);
     char decimalCharRepresentation[1 /* mantissa sign */ + 34 /* mantissa */ +
@@ -389,14 +393,20 @@ std::string Decimal128::toString() const {
 
     std::string dec128String(decimalCharRepresentation);
 
-    // If the string is NaN or Infinity, return either NaN, +Inf, or -Inf
+    // If the string is NaN or Inf, return either NaN, Infinity, or -Infinity
     std::string::size_type ePos = dec128String.find("E");
     if (ePos == std::string::npos) {
-        if (dec128String == "-NaN" || dec128String == "+NaN")
-            return "NaN";
-        if (dec128String[0] == '+')
-            return "Inf";
-        invariant(dec128String == "-Inf");
+        std::string sub = dec128String.substr(dec128String.size() - 3);
+        if (sub == "NaN")
+            dec128String = "NaN";
+        if (sub == "Inf") {
+            if (dec128String[0] == '-') {
+                dec128String = "-Infinity";
+            } else {
+                dec128String = "Infinity";
+            }
+        }
+        dassert(isValidNanOrInf(dec128String));
         return dec128String;
     }
 
