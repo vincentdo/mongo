@@ -393,7 +393,8 @@ std::string Decimal128::toString() const {
 
     std::string dec128String(decimalCharRepresentation);
 
-    // If the string is NaN or Inf, return either NaN, Infinity, or -Infinity
+    // If the string is a variant of NaN (i.e. sNaN, -NaN, +NaN, etc...) or a variant of 
+    // Inf (i.e. +Inf, Inf, -Inf), return either NaN, Infinity, or -Infinity
     std::string::size_type ePos = dec128String.find("E");
     if (ePos == std::string::npos) {
         std::string sub = dec128String.substr(dec128String.size() - 3);
