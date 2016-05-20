@@ -877,6 +877,7 @@ Status JParse::numberDecimal(StringData fieldName, BSONObjBuilder& builder) {
     if (ret != Status::OK()) {
         return ret;
     }
+
     Decimal128 val(decString);
 
     if (!readToken(RPAREN)) {

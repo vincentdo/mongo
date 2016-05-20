@@ -250,7 +250,7 @@ Decimal128::Decimal128(double doubleValue,
 
 Decimal128::Decimal128(std::string stringValue, RoundingMode roundMode) {
     std::uint32_t throwAwayFlag = 0;
-    Decimal128(stringValue, &throwAwayFlag, roundMode);
+    *this = Decimal128(stringValue, &throwAwayFlag, roundMode);
 }
 
 Decimal128::Decimal128(std::string stringValue, std::uint32_t* signalingFlags, RoundingMode roundMode) {
