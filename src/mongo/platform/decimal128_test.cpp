@@ -823,25 +823,32 @@ TEST(Decimal128Test, TestDecimal128ToStringOutRangePos3) {
     ASSERT_EQUALS(result, "1.234567890123456789012345678901234E+33");
 }
 
-TEST(Decimal128Test, TestDecimal128ToStringNegNaN) {
-    std::string s = "-NaN";
+Test(Decimal128Test, TestDecimal128ToStringInvalidToNaN) {
+    std::string s = "Some garbage string";
     Decimal128 d(s);
-    std::string result = d.toString();
-    ASSERT_EQUALS(result, "NaN");
+    ASSERT_EQUALS(d.toString(), "NaN");
+}
+
+TEST(Decimal128Test, TestDecimal128ToStringNaN) {
+    std::string s[3] = {"-NaN", "+NaN", "NaN"};
+    for (auto& item : s) {
+        Decimal128 d(item);
+        ASSERT_EQUALS(d.toString(), "NaN");
+    }
 }
 
 TEST(Decimal128Test, TestDecimal128ToStringPosInf) {
     std::string s[3] = {"Inf", "Infinity", "+Inf"};
-    for (int i = 0; i < 3; i++) {
-        Decimal128 d(s[i]);
+    for (auto& item : s) {
+        Decimal128 d(item);
         ASSERT_EQUALS(d.toString(), "Infinity");
     }
 }
 
 TEST(Decimal128Test, TestDecimal128ToStringNegInf) {
     std::string s[2] = {"-Infinity", "-Inf"};
-    for (int i = 0; i < 2; i++) {
-        Decimal128 d(s[i]);
+    for (auto& item : s) {
+        Decimal128 d(item);
         ASSERT_EQUALS(d.toString(), "-Infinity");
     }
 }
