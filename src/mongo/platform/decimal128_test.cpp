@@ -816,7 +816,7 @@ TEST(Decimal128Test, TestDecimal128ToStringOutRangePos3) {
     ASSERT_EQUALS(result, "1.234567890123456789012345678901234E+33");
 }
 
-Test(Decimal128Test, TestDecimal128ToStringInvalidToNaN) {
+TEST(Decimal128Test, TestDecimal128ToStringInvalidToNaN) {
     std::string s = "Some garbage string";
     Decimal128 d(s);
     ASSERT_EQUALS(d.toString(), "NaN");
@@ -828,6 +828,10 @@ TEST(Decimal128Test, TestDecimal128ToStringNaN) {
         Decimal128 d(item);
         ASSERT_EQUALS(d.toString(), "NaN");
     }
+
+    // Testing a NaN with a payload
+    Decimal128 payloadNaN(Decimal128::Value({/*payload*/0x1, 0x7cull << 56}));
+    ASSERT_EQUALS(payloadNaN.toString(), "NaN");
 }
 
 TEST(Decimal128Test, TestDecimal128ToStringPosInf) {
