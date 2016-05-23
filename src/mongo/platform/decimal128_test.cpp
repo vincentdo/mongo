@@ -661,13 +661,6 @@ TEST(Decimal128Test, TestDecimal128ToStringNeg) {
     ASSERT_EQUALS(result, "-2.087015E-278");
 }
 
-TEST(Decimal128Test, TestDecimal128ToStringPosNaN) {
-    std::string s = "+NaN";
-    Decimal128 d(s);
-    std::string result = d.toString();
-    ASSERT_EQUALS(result, "NaN");
-}
-
 TEST(Decimal128Test, TestDecimal128ToStringInRangeZero1) {
     std::string s = "0";
     Decimal128 d(s);
