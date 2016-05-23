@@ -830,7 +830,7 @@ TEST(Decimal128Test, TestDecimal128ToStringNaN) {
     }
 
     // Testing a NaN with a payload
-    Decimal128 payloadNaN(Decimal128::Value({/*payload*/0x1, 0x7cull << 56}));
+    Decimal128 payloadNaN(Decimal128::Value({/*payload*/ 0x1, 0x7cull << 56}));
     ASSERT_EQUALS(payloadNaN.toString(), "NaN");
 }
 
