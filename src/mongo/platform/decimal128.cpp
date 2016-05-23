@@ -370,10 +370,6 @@ double Decimal128::toDouble(std::uint32_t* signalingFlags, RoundingMode roundMod
     return bid128_to_binary64(dec128, roundMode, signalingFlags);
 }
 
-inline bool isValidNanOrInf(std::string dec128String) {
-    return dec128String == "NaN" || dec128String == "Infinity" || dec128String == "-Infinity";
-}
-
 std::string Decimal128::toString() const {
     if (!isFinite()) {
         if (isNaN()) {
