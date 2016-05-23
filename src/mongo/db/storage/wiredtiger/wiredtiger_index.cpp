@@ -230,7 +230,7 @@ WiredTigerIndex::WiredTigerIndex(OperationContext* ctx,
     if (!versionStatus.isOK()) {
         str::stream ss;
         ss << versionStatus.reason() << " Index: {name: " << desc->indexName()
-           << ", ns: " << desc->parentNS() << "}";
+           << ", ns: " << desc->parentNS() << "}. Try restarting the mongod with --repair.";
         Status indexVersionStatus(
             ErrorCodes::UnsupportedFormat, ss.ss.str(), versionStatus.location());
         fassertFailedWithStatusNoTrace(28579, indexVersionStatus);
