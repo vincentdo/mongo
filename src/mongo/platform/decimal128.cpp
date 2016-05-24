@@ -371,16 +371,16 @@ double Decimal128::toDouble(std::uint32_t* signalingFlags, RoundingMode roundMod
 }
 
 std::string Decimal128::toString() const {
-    // If the string is a variant of NaN (i.e. sNaN, -NaN, +NaN, etc...) or a variant of
+    // If the decimal is a variant of NaN (i.e. sNaN, -NaN, +NaN, etc...) or a variant of
     // Inf (i.e. +Inf, Inf, -Inf), return either NaN, Infinity, or -Infinity
     if (!isFinite()) {
-        if (isNaN()) {
-            return "NaN";
-        } else if (this->isEqual(kPositiveInfinity)) {
+        if (this->isEqual(kPositiveInfinity)) {
             return "Infinity";
         } else if (this->isEqual(kNegativeInfinity)) {
             return "-Infinity";
         }
+        invariant(isNaN());
+        return "NaN";
     }
     BID_UINT128 dec128 = decimal128ToLibraryType(_value);
     char decimalCharRepresentation[1 /* mantissa sign */ + 34 /* mantissa */ +
