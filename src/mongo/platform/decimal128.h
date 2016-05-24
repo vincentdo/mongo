@@ -394,6 +394,9 @@ private:
     static const uint64_t kCombinationNaN = 0x1f << 12;
     static const uint64_t kCanonicalCoefficientHighFieldMask = (1ull << 49) - 1;
 
+    std::string _convertToScientificNotation(std::string coefficient, int adjustedExponent) const;
+    std::string _convertToStandardDecimalNotation(std::string coefficient, int exponent) const;
+
     uint64_t _getCombinationField() const {
         return (_value.high64 >> kCombinationFieldPos) & kCombinationFieldMask;
     }

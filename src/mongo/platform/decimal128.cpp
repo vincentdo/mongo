@@ -403,9 +403,9 @@ std::string Decimal128::toString() const {
     std::string::size_type ePos = dec128String.find("E");
 
     // Calculate the precision and exponent of the number and output it in a readable manner
-    int precision = 0;
+    unsigned int precision = 0;
     int exponent = 0;
-    int stringReadPosition = 0;
+    // int stringReadPosition = 0;
 
     std::string exponentString = dec128String.substr(ePos);
 
@@ -416,7 +416,7 @@ std::string Decimal128::toString() const {
     if (exponentString[1] == '-') {
         exponent *= -1;
     }
-    // Get the total precision of the number
+    // Get the total precision of the number, i.e. the length of the coefficient
     precision = dec128String.size() - exponentString.size() - 1 /* mantissa sign */;
 
     std::string result;
@@ -424,52 +424,63 @@ std::string Decimal128::toString() const {
     // For formatting, leave off the sign if it is positive
     if (dec128String[0] == '-')
         result = "-";
-    stringReadPosition++;
 
-    int scientificExponent = precision - 1 + exponent;
+    std::string coefficient = dec128String.substr(1, precision);
+    int adjustedExponent = exponent + precision - 1;
 
-    // If the number is significantly large, small, or the user has specified an exponent
-    // such that converting to string would need to append trailing zeros, display the
-    // number in scientific notation
-    if (scientificExponent >= 12 || scientificExponent <= -4 || exponent > 0) {
-        // Output in scientific format
-        result += dec128String.substr(stringReadPosition, 1);
-        stringReadPosition++;
-        precision--;
-        if (precision)
-            result += ".";
-        result += dec128String.substr(stringReadPosition, precision);
-        // Add the exponent
-        result += "E";
-        if (scientificExponent > 0)
-            result += "+";
-        result += std::to_string(scientificExponent);
+    if (exponent > 0 || adjustedExponent < -6) {
+        result += _convertToScientificNotation(coefficient, adjustedExponent);
     } else {
-        // Regular format with no decimal place
-        if (exponent >= 0) {
-            result += dec128String.substr(stringReadPosition, precision);
-            stringReadPosition += precision;
-        } else {
-            int radixPosition = precision + exponent;
-            if (radixPosition > 0) {
-                // Non-zero digits before radix point
-                result += dec128String.substr(stringReadPosition, radixPosition);
-                stringReadPosition += radixPosition;
-            } else {
-                // Leading zero before radix point
-                result += "0";
-            }
-
-            result += ".";
-            // Leading zeros after radix point
-            while (radixPosition++ < 0)
-                result += "0";
-
-            result +=
-                dec128String.substr(stringReadPosition, precision - std::max(radixPosition - 1, 0));
-        }
+        result += _convertToStandardDecimalNotation(coefficient, exponent);
     }
 
+    return result;
+}
+
+std::string Decimal128::_convertToScientificNotation(std::string coefficient,
+                                                     int adjustedExponent) const {
+    std::string::size_type cLength = coefficient.size();
+    std::string result;
+    for (std::string::size_type i = 0; i < cLength; i++) {
+        result += coefficient[i];
+        if (i == 0 && cLength > 1) {
+            result += '.';
+        }
+    }
+    result += 'E';
+    if (adjustedExponent > 0) {
+        result += '+';
+    }
+    result += std::to_string(adjustedExponent);
+    return result;
+}
+
+std::string Decimal128::_convertToStandardDecimalNotation(std::string coefficient,
+                                                          int exponent) const {
+    std::string result;
+    std::string::size_type precision = coefficient.size();
+    if (exponent != 0) {
+        // Absolute value of the exponent which, in this case, is always negative
+        unsigned int significantDecimalDigits = -exponent;
+        bool decimalAppended = false;
+        // Pre-pend 0's before the coefficient as necessary
+        for (std::string::size_type i = precision; i <= significantDecimalDigits; i++) {
+            result += '0';
+            if (i == precision) {
+                result += '.';
+                decimalAppended = true;
+            }
+        }
+        // Copy over the digits in the coefficient
+        for (std::string::size_type i = 0; i < precision; i++) {
+            if (precision - i == significantDecimalDigits && !decimalAppended) {
+                result += '.';
+            }
+            result += coefficient[i];
+        }
+    } else {
+        result += coefficient;
+    }
     return result;
 }
 
