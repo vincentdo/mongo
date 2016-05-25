@@ -1,8 +1,7 @@
-{
-    "description": "Decimal128",
-    "bson_type": "0x13",
-    "test_key": "d",
-    "parseErrors": [
+(function() {
+    "use strict";
+
+    var parseErrors = [
         {
             "description": "Incomplete Exponent",
             "string": "1e"
@@ -127,5 +126,13 @@
             "description": "Invalid",
             "string": "1.23E+0aabs2"
         }
-    ]
-}
+    ];
+
+    parseErrors.forEach(function(testCase) {
+        print(`Test - ${testCase.description}`);
+        function test() {
+            NumberDecimal(testCase.string);
+        }
+        assert.throws(test, [], `[Test - ${testCase.description}] should have failed with error.`);
+    });
+}());

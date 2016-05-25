@@ -1,8 +1,7 @@
-{
-    "description": "Decimal128",
-    "bson_type": "0x13",
-    "test_key": "d",
-    "valid": [
+(function() {
+    "use strict";
+
+    var testData = [
         {
             "description": "[decq035] fold-downs (more below) (Clamped)",
             "input": "1.23E+6144",
@@ -330,6 +329,16 @@
             "input": "1E+6112",
             "expected": "1.0E+6112"
         }
-    ]
-}
+    ];
 
+    testData.forEach(function(testCase) {
+        print(`Test - ${testCase.description}`);
+        var output = NumberDecimal(testCase.input).toString();
+        if (testCase.expected) {
+            assert.eq(output, `NumberDecimal("${testCase.expected}")`);
+        } else {
+            assert.eq(output, `NumberDecimal("${testCase.input}")`);
+        }
+    });
+
+}());
