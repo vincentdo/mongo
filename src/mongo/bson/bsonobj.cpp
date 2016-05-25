@@ -702,7 +702,7 @@ std::string BSONObj::hexDump() const {
     for (int i = 0; i < size; ++i) {
         ss.width(2);
         ss.fill('0');
-        ss << std::hex << (unsigned)(unsigned char)(d[i]) << std::dec;
+        ss << std::hex << (unsigned)(unsigned char)(d[i]);
         if ((d[i] >= '0' && d[i] <= '9') || (d[i] >= 'A' && d[i] <= 'z'))
             ss << '\'' << d[i] << '\'';
         if (i != size - 1)
