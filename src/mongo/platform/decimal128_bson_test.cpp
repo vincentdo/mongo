@@ -27,15 +27,18 @@
 
 #define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kDefault
 #include "mongo/platform/decimal128.h"
+#include "mongo/platform/decimal128_bson_test.h"
 
 #include <array>
 #include <cmath>
 #include <string>
 #include <utility>
 
+#include "mongo/bson/bsonelement.h"
 #include "mongo/bson/bsonobj.h"
 #include "mongo/bson/bsonobjbuilder.h"
 #include "mongo/config.h"
+#include "mongo/db/json.h"
 #include "mongo/stdx/memory.h"
 #include "mongo/unittest/unittest.h"
 #include "mongo/util/log.h"
@@ -44,33 +47,65 @@
 namespace {
     using namespace mongo;
 
-    const char * convertHexStringToObjData(std::string hexString) {
-        auto buffer = SharedBuffer::allocate(hexString.size()/2);
-        const char* p = hexString.c_str();
+    BSONObj convertHexStringToBsonObj(StringData hexString) {
+        const char* p = hexString.rawData();
         char data[hexString.size() / 2];
         
         for (unsigned int i = 0; i < hexString.size()/2; i++) {
             data[i] = fromHex(p);
             p += 2;
         }
+
+        auto buffer = SharedBuffer::allocate(hexString.size()/2);
         memcpy(buffer.get(), data, hexString.size()/2);
-        return buffer.get();
+
+        return BSONObj(std::move(buffer));
     }
 
-    TEST(Decimal128BSONTest, TestWithBSON) {
-        std::string hexString("180000001364000000000000000000000000000000007C00");
+    // reconcile format differences between test data and output data
+    std::string trimWhiteSpace(std::string str) {
+        std::string result;
+        for (size_t i = 0; i < str.size(); i++) {
+            if (str[i] != ' ') {
+                result += str[i];
+            }
+        }
+        return result;
+    }
 
-        const char * data = convertHexStringToObjData(hexString);
+    TEST(Decimal128BSONTest, TestsConstructingDecimalWithBsonDump) {
+        BSONObj allData = fromjson(testData);
+        BSONObj data = allData.getObjectField("valid");
+        BSONObjIterator it(data);
 
-        BSONObjBuilder builder;
-        builder.append("a", "random shit");
-        BSONObj obj = builder.obj();
+        while (it.moreWithEOO()) {
+            BSONElement testCase = it.next();
+            if (testCase.eoo()) {
+                break;
+            }
+            if (testCase.type() == Object) {
+                BSONObj b = testCase.Obj();
+                BSONElement desc = b.getField("description");
+                BSONElement bson = b.getField("bson");
+                BSONElement extjson = b.getField("extjson");
+                BSONElement canonical_extjson = b.getField("canonical_extjson");
 
-        log() << obj;
-        log() << obj.hexDump();
+                log() << "Test - " << desc.str();
 
-        BSONObj b(data);
-        std::string json(b.jsonString());
-        log() << json;
+                StringData hexString = bson.valueStringData();
+                BSONObj d = convertHexStringToBsonObj(hexString);
+                std::string outputJson = d.jsonString();
+                std::string expectedJson;
+
+                if (!canonical_extjson.eoo()) {
+                    expectedJson = canonical_extjson.str();
+                } else {
+                    expectedJson = extjson.str();
+                }
+
+                ASSERT_EQ(trimWhiteSpace(outputJson), trimWhiteSpace(expectedJson));
+                log() << "PASSED";
+            }
+        }
     }
 }
