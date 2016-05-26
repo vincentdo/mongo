@@ -12,16 +12,8 @@
           "input": "+0.003",
           "expected": "0.003"
         },
-        {
-          "description": "[basx610] Zeros",
-          "input": ".0",
-          "expected": "0.0"
-        },
-        {
-          "description": "[basx612] Zeros",
-          "input": "-.0",
-          "expected": "-0.0"
-        },
+        {"description": "[basx610] Zeros", "input": ".0", "expected": "0.0"},
+        {"description": "[basx612] Zeros", "input": "-.0", "expected": "-0.0"},
         {
           "description": "[basx043] strings without E cannot generate E in result",
           "input": "+12.76",
@@ -68,40 +60,21 @@
     ];
 
     var parseErrors = [
+        {"description": "[basx564] Near-specials (Conversion_syntax)", "string": "Infi"},
+        {"description": "[basx565] Near-specials (Conversion_syntax)", "string": "Infin"},
+        {"description": "[basx566] Near-specials (Conversion_syntax)", "string": "Infini"},
+        {"description": "[basx567] Near-specials (Conversion_syntax)", "string": "Infinit"},
+        {"description": "[basx568] Near-specials (Conversion_syntax)", "string": "-Infinit"},
         {
-          "description": "[basx564] Near-specials (Conversion_syntax)",
-          "string": "Infi"
-        },
-        {
-          "description": "[basx565] Near-specials (Conversion_syntax)",
-          "string": "Infin"
-        },
-        {
-          "description": "[basx566] Near-specials (Conversion_syntax)",
-          "string": "Infini"
-        },
-        {
-          "description": "[basx567] Near-specials (Conversion_syntax)",
-          "string": "Infinit"
-        },
-        {
-          "description": "[basx568] Near-specials (Conversion_syntax)",
-          "string": "-Infinit"
-        },
-        {
-          "description": "[basx590] some baddies with dots and Es and dots and specials (Conversion_syntax)",
+          "description":
+              "[basx590] some baddies with dots and Es and dots and specials (Conversion_syntax)",
           "string": ".Infinity"
         },
+        {"description": "[basx562] Near-specials (Conversion_syntax)", "string": "NaNq"},
+        {"description": "[basx563] Near-specials (Conversion_syntax)", "string": "NaNs"},
         {
-          "description": "[basx562] Near-specials (Conversion_syntax)",
-          "string": "NaNq"
-        },
-        {
-          "description": "[basx563] Near-specials (Conversion_syntax)",
-          "string": "NaNs"
-        },
-        {
-          "description": "[dqbas939] overflow results at different rounding modes (Overflow & Inexact & Rounded)",
+          "description":
+              "[dqbas939] overflow results at different rounding modes (Overflow & Inexact & Rounded)",
           "string": "-7e10000"
         },
         {
@@ -137,21 +110,21 @@
           "string": "1.11111111111111111111111111111234650"
         },
         {
-          "description": "[dqbas938] overflow results at different rounding modes (Overflow & Inexact & Rounded)",
+          "description":
+              "[dqbas938] overflow results at different rounding modes (Overflow & Inexact & Rounded)",
           "string": "7e10000"
         },
         {
           "description": "Inexact rounding#1",
           "string": "100000000000000000000000000000000000000000000000000000000001"
         },
-        {
-          "description": "Inexact rounding#2",
-          "string": "1E-6177"
-        }
+        {"description": "Inexact rounding#2", "string": "1E-6177"}
     ];
 
     testData.forEach(function(testCase) {
-        print(`Test - ${testCase.description}`);
+        print(`Test - $ {
+            testCase.description
+        }`);
         var output = NumberDecimal(testCase.input).toString();
         if (testCase.expected) {
             assert.eq(output, `NumberDecimal("${testCase.expected}")`);
@@ -161,7 +134,9 @@
     });
 
     parseErrors.forEach(function(testCase) {
-        print(`Test - ${testCase.description}`);
+        print(`Test - $ {
+            testCase.description
+        }`);
         function test() {
             NumberDecimal(testCase.string);
         }

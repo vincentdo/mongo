@@ -45,67 +45,67 @@
 #include "mongo/util/hex.h"
 
 namespace {
-    using namespace mongo;
+using namespace mongo;
 
-    BSONObj convertHexStringToBsonObj(StringData hexString) {
-        const char* p = hexString.rawData();
-        char data[hexString.size() / 2];
-        
-        for (unsigned int i = 0; i < hexString.size()/2; i++) {
-            data[i] = fromHex(p);
-            p += 2;
-        }
+BSONObj convertHexStringToBsonObj(StringData hexString) {
+    const char* p = hexString.rawData();
+    char data[hexString.size() / 2];
 
-        auto buffer = SharedBuffer::allocate(hexString.size()/2);
-        memcpy(buffer.get(), data, hexString.size()/2);
-
-        return BSONObj(std::move(buffer));
+    for (unsigned int i = 0; i < hexString.size() / 2; i++) {
+        data[i] = fromHex(p);
+        p += 2;
     }
 
-    // reconcile format differences between test data and output data
-    std::string trimWhiteSpace(std::string str) {
-        std::string result;
-        for (size_t i = 0; i < str.size(); i++) {
-            if (str[i] != ' ') {
-                result += str[i];
-            }
-        }
-        return result;
-    }
+    auto buffer = SharedBuffer::allocate(hexString.size() / 2);
+    memcpy(buffer.get(), data, hexString.size() / 2);
 
-    TEST(Decimal128BSONTest, TestsConstructingDecimalWithBsonDump) {
-        BSONObj allData = fromjson(testData);
-        BSONObj data = allData.getObjectField("valid");
-        BSONObjIterator it(data);
+    return BSONObj(std::move(buffer));
+}
 
-        while (it.moreWithEOO()) {
-            BSONElement testCase = it.next();
-            if (testCase.eoo()) {
-                break;
-            }
-            if (testCase.type() == Object) {
-                BSONObj b = testCase.Obj();
-                BSONElement desc = b.getField("description");
-                BSONElement bson = b.getField("bson");
-                BSONElement extjson = b.getField("extjson");
-                BSONElement canonical_extjson = b.getField("canonical_extjson");
-
-                log() << "Test - " << desc.str();
-
-                StringData hexString = bson.valueStringData();
-                BSONObj d = convertHexStringToBsonObj(hexString);
-                std::string outputJson = d.jsonString();
-                std::string expectedJson;
-
-                if (!canonical_extjson.eoo()) {
-                    expectedJson = canonical_extjson.str();
-                } else {
-                    expectedJson = extjson.str();
-                }
-
-                ASSERT_EQ(trimWhiteSpace(outputJson), trimWhiteSpace(expectedJson));
-                log() << "PASSED";
-            }
+// Reconcile format differences between test data and output data.
+std::string trimWhiteSpace(std::string str) {
+    std::string result;
+    for (size_t i = 0; i < str.size(); i++) {
+        if (str[i] != ' ') {
+            result += str[i];
         }
     }
+    return result;
+}
+
+TEST(Decimal128BSONTest, TestsConstructingDecimalWithBsonDump) {
+    BSONObj allData = fromjson(testData);
+    BSONObj data = allData.getObjectField("valid");
+    BSONObjIterator it(data);
+
+    while (it.moreWithEOO()) {
+        BSONElement testCase = it.next();
+        if (testCase.eoo()) {
+            break;
+        }
+        if (testCase.type() == Object) {
+            BSONObj b = testCase.Obj();
+            BSONElement desc = b.getField("description");
+            BSONElement bson = b.getField("bson");
+            BSONElement extjson = b.getField("extjson");
+            BSONElement canonical_extjson = b.getField("canonical_extjson");
+
+            log() << "Test - " << desc.str();
+
+            StringData hexString = bson.valueStringData();
+            BSONObj d = convertHexStringToBsonObj(hexString);
+            std::string outputJson = d.jsonString();
+            std::string expectedJson;
+
+            if (!canonical_extjson.eoo()) {
+                expectedJson = canonical_extjson.str();
+            } else {
+                expectedJson = extjson.str();
+            }
+
+            ASSERT_EQ(trimWhiteSpace(outputJson), trimWhiteSpace(expectedJson));
+            log() << "PASSED";
+        }
+    }
+}
 }
