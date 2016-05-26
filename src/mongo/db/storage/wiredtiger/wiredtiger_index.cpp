@@ -230,7 +230,9 @@ WiredTigerIndex::WiredTigerIndex(OperationContext* ctx,
     if (!versionStatus.isOK()) {
         str::stream ss;
         ss << versionStatus.reason() << " Index: {name: " << desc->indexName()
-           << ", ns: " << desc->parentNS() << "}. Try restarting the mongod with --repair.";
+           << ", ns: " << desc->parentNS() << "} - version too new for this mongod."
+           << " See http://dochub.mongodb.org/core/3.4-index-downgrade for detailed"
+           << " instructions on how to handle this error.";
         Status indexVersionStatus(
             ErrorCodes::UnsupportedFormat, ss.ss.str(), versionStatus.location());
         fassertFailedWithStatusNoTrace(28579, indexVersionStatus);
