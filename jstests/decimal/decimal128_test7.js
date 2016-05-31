@@ -247,7 +247,7 @@
         {
           "description":
               "[basx559] The 'baddies' tests from DiagBigDecimal, plus some new ones (Conversion_syntax)",
-          "string": "1E1"
+          "string": "1E\"1"
         },
         {
           "description":
@@ -373,9 +373,7 @@
     ];
 
     parseErrors.forEach(function(testCase) {
-        print(`Test - $ {
-            testCase.description
-        }`);
+        print(`Test - ${testCase.description}`);
         function test() {
             NumberDecimal(testCase.string);
         }

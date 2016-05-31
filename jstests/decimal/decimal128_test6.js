@@ -36,9 +36,7 @@
     ];
 
     parseErrors.forEach(function(testCase) {
-        print(`Test - $ {
-            testCase.description
-        }`);
+        print(`Test - ${testCase.description}`);
         function test() {
             NumberDecimal(testCase.string);
         }

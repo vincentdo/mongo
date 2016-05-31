@@ -26,6 +26,8 @@
  * then also delete it in the license file.
  */
 
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kDefault
+
 #include "mongo/platform/basic.h"
 
 #include "mongo/scripting/mozjs/valuewriter.h"
@@ -41,6 +43,7 @@
 #include "mongo/scripting/mozjs/valuereader.h"
 #include "mongo/util/base64.h"
 #include "mongo/util/represent_as.h"
+#include "mongo/util/log.h"
 
 namespace mongo {
 namespace mozjs {
@@ -194,6 +197,59 @@ int64_t ValueWriter::toInt64() {
     throwCurrentJSException(_context, ErrorCodes::BadValue, "Failure to convert value to number");
 }
 
+inline bool isAsciiDigit(char c) {
+    return  c >= '0' && c <='9';
+}
+
+inline std::string toAsciiLowerCase(std::string input) {
+    std::string res;
+    res.reserve(input.size());
+    for (size_t i = 0; i < input.size(); i++) {
+        char c = input[i];
+        if (c >= 'A' && c <= 'Z') {
+            res += c + 32;
+        } else {
+            res += c;
+        }
+    }
+    return res;
+}
+
+inline bool inputIsValid(std::string input) {
+    bool inputIsSigned = input[0] == '-' || input[0] == '+';
+
+    // Input must starts with form: [+-][0][.][digit]
+    bool hasValidStart = false;
+    if (inputIsSigned) {
+         hasValidStart = isAsciiDigit(input[1]) || (input[1] == '.' && isAsciiDigit(input[2]));
+    } else {
+        hasValidStart = isAsciiDigit(input[0]) || (input[0] == '.' && isAsciiDigit(input[1]));
+    }
+
+    bool hasValidExponent = true;
+    size_t ePos = std::string::npos;
+    for (size_t i = 0; i < input.size(); i++) {
+        if (input[i] == 'e' || input[i] == 'E') {
+            if (ePos == std::string::npos) {
+                ePos = i;
+            } 
+        }
+        if (ePos != std::string::npos) {
+            if (i == ePos + 1 && input[i] != '-' && input[i] != '+' && !isAsciiDigit(input[i])) {
+                hasValidExponent = false;
+                break;
+            }
+            if (i > ePos + 1) {
+                if (!isAsciiDigit(input[i])) {
+                    hasValidExponent = false;
+                    break;
+                } 
+            }
+        } 
+    }
+    return hasValidStart && hasValidExponent;
+}
+
 Decimal128 ValueWriter::toDecimal128() {
     std::uint32_t signalingFlag = 0;
     if (_value.isNumber()) {
@@ -209,19 +265,51 @@ Decimal128 ValueWriter::toDecimal128() {
         return NumberDecimalInfo::ToNumberDecimal(_context, _value);
 
     if (_value.isString()) {
-        std::string input = toString();
+        std::string input = toAsciiLowerCase(toString());
         Decimal128 decimal = Decimal128(input, &signalingFlag);
 
-        // All strings other than NaN are invalid
-        if (decimal.isNaN() && input != "NaN" && input != "+NaN" && input != "-NaN") {
+        // Handle invalid input
+        if (decimal.isFinite() && !inputIsValid(input)) {
             uasserted(ErrorCodes::BadValue,
-                      str::stream() << "Input is not a valid Decimal128 value.");
+                  str::stream() << "Input is not a valid Decimal128 value.");
         }
+
+        // Handle all NaN generating strings
+        if (decimal.isNaN()) {
+            if (input != "nan" && input != "+nan" && input != "-nan") {
+                uasserted(ErrorCodes::BadValue,
+                      str::stream() << "Input is not a valid Decimal128 value.");
+            }
+            return decimal;
+        }
+
+        // No error in conversion
+        if (signalingFlag == 0 || (decimal.isZero() && input[0] == '0')) {
+            return decimal;
+        }
+
+        // Zero clamping
+        if (decimal.isZero()) {
+            bool inputIsZero = input[0] == '0';
+            bool inputIsSignedZero = (input.size() > 1)  && (input[0] == '-' || input[0] == '+') && input[1] == '0';
+            if (inputIsZero || inputIsSignedZero) {
+                return decimal;
+            }
+        }
+
+        // Inexact conversion error cases
         if (Decimal128::hasFlag(signalingFlag, Decimal128::SignalingFlag::kInexact)) {
             uasserted(ErrorCodes::BadValue,
-                      str::stream() << "Input out of range of a Decimal128 value.");
+                      str::stream() << "Input out of range (inexact) of Decimal128 value.");
         }
-        return decimal;
+        if (Decimal128::hasFlag(signalingFlag, Decimal128::SignalingFlag::kUnderflow)) {
+            uasserted(ErrorCodes::BadValue,
+                      str::stream() << "Input out of range (underflow) of Decimal128 value.");
+        }
+        if (Decimal128::hasFlag(signalingFlag, Decimal128::SignalingFlag::kOverflow)) {
+            uasserted(ErrorCodes::BadValue,
+                      str::stream() << "Input out of range (overflow) of Decimal128 value.");
+        }
     }
     uasserted(ErrorCodes::BadValue, str::stream() << "Unable to write Decimal128 value.");
 }

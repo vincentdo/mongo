@@ -713,9 +713,7 @@
     ];
 
     data.forEach(function(testCase) {
-        print(`Test - $ {
-            testCase.description
-        }`);
+        print(`Test - ${testCase.description}`);
         var output = NumberDecimal(testCase.input).toString();
         if (testCase.expected) {
             assert.eq(output, `NumberDecimal("${testCase.expected}")`);
