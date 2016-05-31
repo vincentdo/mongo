@@ -270,25 +270,13 @@
         {"description": "[basx257] Numbers with E", "input": "0.1265E-0", "expected": "0.1265"},
         {"description": "[basx256] Numbers with E", "input": "0.1265E-1", "expected": "0.01265"},
         {"description": "[basx258] Numbers with E", "input": "0.1265E+1", "expected": "1.265"},
-        {
-          "description": "[basx251] Numbers with E",
-          "input": "0.1265E-20",
-          "expected": "1.265E-21"
-        },
-        {
-          "description": "[basx263] Numbers with E",
-          "input": "0.1265E+20",
-          "expected": "1.265E+19"
-        },
+        {"description": "[basx251] Numbers with E", "input": "0.1265E-20", "expected": "1.265E-21"},
+        {"description": "[basx263] Numbers with E", "input": "0.1265E+20", "expected": "1.265E+19"},
         {"description": "[basx255] Numbers with E", "input": "0.1265E-2", "expected": "0.001265"},
         {"description": "[basx259] Numbers with E", "input": "0.1265E+2", "expected": "12.65"},
         {"description": "[basx254] Numbers with E", "input": "0.1265E-3", "expected": "0.0001265"},
         {"description": "[basx260] Numbers with E", "input": "0.1265E+3", "expected": "126.5"},
-        {
-          "description": "[basx253] Numbers with E",
-          "input": "0.1265E-4",
-          "expected": "0.00001265"
-        },
+        {"description": "[basx253] Numbers with E", "input": "0.1265E-4", "expected": "0.00001265"},
         {"description": "[basx261] Numbers with E", "input": "0.1265E+4", "expected": "1265"},
         {"description": "[basx252] Numbers with E", "input": "0.1265E-8", "expected": "1.265E-9"},
         {"description": "[basx262] Numbers with E", "input": "0.1265E+8", "expected": "1.265E+7"},
@@ -356,83 +344,43 @@
         },
         {"description": "[basx409] Engineering notation tests", "input": "7E-12"},
         {"description": "[basx411] Engineering notation tests", "input": "7E-13"},
-        {
-          "description": "[basx383] Engineering notation tests",
-          "input": "7E1",
-          "expected": "7E+1"
-        },
-        {
-          "description": "[basx387] Engineering notation tests",
-          "input": "7E-1",
-          "expected": "0.7"
-        },
-        {
-          "description": "[basx381] Engineering notation tests",
-          "input": "7E2",
-          "expected": "7E+2"
-        },
+        {"description": "[basx383] Engineering notation tests", "input": "7E1", "expected": "7E+1"},
+        {"description": "[basx387] Engineering notation tests", "input": "7E-1", "expected": "0.7"},
+        {"description": "[basx381] Engineering notation tests", "input": "7E2", "expected": "7E+2"},
         {
           "description": "[basx389] Engineering notation tests",
           "input": "7E-2",
           "expected": "0.07"
         },
-        {
-          "description": "[basx379] Engineering notation tests",
-          "input": "7E3",
-          "expected": "7E+3"
-        },
+        {"description": "[basx379] Engineering notation tests", "input": "7E3", "expected": "7E+3"},
         {
           "description": "[basx391] Engineering notation tests",
           "input": "7E-3",
           "expected": "0.007"
         },
-        {
-          "description": "[basx377] Engineering notation tests",
-          "input": "7E4",
-          "expected": "7E+4"
-        },
+        {"description": "[basx377] Engineering notation tests", "input": "7E4", "expected": "7E+4"},
         {
           "description": "[basx393] Engineering notation tests",
           "input": "7E-4",
           "expected": "0.0007"
         },
-        {
-          "description": "[basx375] Engineering notation tests",
-          "input": "7E5",
-          "expected": "7E+5"
-        },
+        {"description": "[basx375] Engineering notation tests", "input": "7E5", "expected": "7E+5"},
         {
           "description": "[basx395] Engineering notation tests",
           "input": "7E-5",
           "expected": "0.00007"
         },
-        {
-          "description": "[basx373] Engineering notation tests",
-          "input": "7E6",
-          "expected": "7E+6"
-        },
+        {"description": "[basx373] Engineering notation tests", "input": "7E6", "expected": "7E+6"},
         {
           "description": "[basx397] Engineering notation tests",
           "input": "7E-6",
           "expected": "0.000007"
         },
-        {
-          "description": "[basx371] Engineering notation tests",
-          "input": "7E7",
-          "expected": "7E+7"
-        },
+        {"description": "[basx371] Engineering notation tests", "input": "7E7", "expected": "7E+7"},
         {"description": "[basx399] Engineering notation tests", "input": "7E-7"},
-        {
-          "description": "[basx369] Engineering notation tests",
-          "input": "7E8",
-          "expected": "7E+8"
-        },
+        {"description": "[basx369] Engineering notation tests", "input": "7E8", "expected": "7E+8"},
         {"description": "[basx401] Engineering notation tests", "input": "7E-8"},
-        {
-          "description": "[basx367] Engineering notation tests",
-          "input": "7E9",
-          "expected": "7E+9"
-        },
+        {"description": "[basx367] Engineering notation tests", "input": "7E9", "expected": "7E+9"},
         {"description": "[basx403] Engineering notation tests", "input": "7E-9"},
         {
           "description": "[basx007] conform to rules and exponent will be in permitted range).",
@@ -653,11 +601,7 @@
         {"description": "[basx220] Numbers with E", "input": "126.5E+3", "expected": "1.265E+5"},
         {"description": "[basx213] Numbers with E", "input": "126.5E-4", "expected": "0.01265"},
         {"description": "[basx221] Numbers with E", "input": "126.5E+4", "expected": "1.265E+6"},
-        {
-          "description": "[basx212] Numbers with E",
-          "input": "126.5E-8",
-          "expected": "0.000001265"
-        },
+        {"description": "[basx212] Numbers with E", "input": "126.5E-8", "expected": "0.000001265"},
         {"description": "[basx222] Numbers with E", "input": "126.5E+8", "expected": "1.265E+10"},
         {
           "description": "[basx006] conform to rules and exponent will be in permitted range).",

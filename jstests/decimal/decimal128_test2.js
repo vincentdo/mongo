@@ -143,10 +143,7 @@
           "description": "[decq630] fold-down full sequence",
           "input": "1.0000000000000000000E+6130"
         },
-        {
-          "description": "[decq632] fold-down full sequence",
-          "input": "1.000000000000000000E+6129"
-        },
+        {"description": "[decq632] fold-down full sequence", "input": "1.000000000000000000E+6129"},
         {"description": "[decq634] fold-down full sequence", "input": "1.00000000000000000E+6128"},
         {"description": "[decq636] fold-down full sequence", "input": "1.0000000000000000E+6127"},
         {"description": "[decq638] fold-down full sequence", "input": "1.000000000000000E+6126"},

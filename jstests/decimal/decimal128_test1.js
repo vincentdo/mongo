@@ -64,10 +64,7 @@
         {"description": "Scientific - Trailing Zero", "input": "1.050E+4"},
         {"description": "Scientific - With Decimal", "input": "1.05E+3"},
         {"description": "Scientific - Full", "input": "5192296858534827628530496329220095"},
-        {
-          "description": "Scientific - Large",
-          "input": "1.000000000000000000000000000000000E+6144"
-        },
+        {"description": "Scientific - Large", "input": "1.000000000000000000000000000000000E+6144"},
         {
           "description": "Scientific - Largest",
           "input": "9.999999999999999999999999999999999E+6144"
