@@ -45,6 +45,26 @@
 namespace mongo {
 namespace mozjs {
 
+namespace {
+    bool isAsciiDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    std::string toAsciiLowerCase(std::string input) {
+        std::string res;
+        res.reserve(input.size());
+        for (size_t i = 0; i < input.size(); i++) {
+            char c = input[i];
+            if (c >= 'A' && c <= 'Z') {
+                res += c + 32;
+            } else {
+                res += c;
+            }
+        }
+        return res;
+    }
+} // namespace
+
 ValueWriter::ValueWriter(JSContext* cx, JS::HandleValue value)
     : _context(cx), _value(value), _originalParent(nullptr) {}
 
@@ -192,24 +212,6 @@ int64_t ValueWriter::toInt64() {
         return out;
 
     throwCurrentJSException(_context, ErrorCodes::BadValue, "Failure to convert value to number");
-}
-
-inline bool isAsciiDigit(char c) {
-    return c >= '0' && c <= '9';
-}
-
-inline std::string toAsciiLowerCase(std::string input) {
-    std::string res;
-    res.reserve(input.size());
-    for (size_t i = 0; i < input.size(); i++) {
-        char c = input[i];
-        if (c >= 'A' && c <= 'Z') {
-            res += c + 32;
-        } else {
-            res += c;
-        }
-    }
-    return res;
 }
 
 inline bool inputIsValid(std::string input) {
