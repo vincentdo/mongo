@@ -1,5 +1,7 @@
 #pragma once
 
+namespace {
+
 std::string testData = R"VOGON({
     "valid": [
         {
@@ -3333,3 +3335,5 @@ std::string testData = R"VOGON({
      	}   
     ]
 })VOGON";
+
+} // namespace

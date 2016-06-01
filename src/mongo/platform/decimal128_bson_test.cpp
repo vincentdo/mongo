@@ -110,4 +110,4 @@ TEST(Decimal128BSONTest, TestsConstructingDecimalWithBsonDump) {
         }
     }
 }
-}
+} // namespace
