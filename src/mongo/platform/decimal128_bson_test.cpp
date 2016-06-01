@@ -26,7 +26,8 @@
  */
 
 #define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kDefault
-#include "mongo/platform/decimal128.h"
+
+#include "mongo/platform/basic.h"
 #include "mongo/platform/decimal128_bson_test.h"
 
 #include <array>
@@ -39,6 +40,7 @@
 #include "mongo/bson/bsonobjbuilder.h"
 #include "mongo/config.h"
 #include "mongo/db/json.h"
+#include "mongo/platform/decimal128.h"
 #include "mongo/stdx/memory.h"
 #include "mongo/unittest/unittest.h"
 #include "mongo/util/hex.h"
