@@ -28,6 +28,7 @@
 #define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kDefault
 
 #include "mongo/platform/basic.h"
+ 
 #include "mongo/platform/decimal128_bson_test.h"
 
 #include <array>
