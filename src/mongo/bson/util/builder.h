@@ -222,10 +222,6 @@ public:
     void appendNum(unsigned long long j) {
         appendNumImpl(j);
     }
-    void appendNum(Decimal128 j) {
-        BOOST_STATIC_ASSERT(sizeof(Decimal128::Value) == 16);
-        appendNumImpl(j.getValue());
-    }
 
     void appendBuf(const void* src, size_t len) {
         if (len)
